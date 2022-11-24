@@ -110,6 +110,7 @@ const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+
 // Date
 const formatMovementDate = function (date, locale) {
   const calcDaysPassed = (day1, day2) =>
@@ -123,10 +124,6 @@ const formatMovementDate = function (date, locale) {
   if (daysPassed <= 7) {
     return `${daysPassed} days ago`;
   } else {
-    // const day = `${date.getDate()}`.padStart(2, 0);
-    // const month = `${date.getMonth() + 1}`.padStart(2, 0);
-    // const year = date.getFullYear();
-
     return new Intl.DateTimeFormat(locale).format(date);
   }
 };
@@ -238,15 +235,35 @@ const updateUi = function (acc) {
   calcDisplaySummury(acc);
 };
 
+// set Timer for the section
+const startLogOutTimer = function () {
+  const tick = function () {
+    const min = String(Math.trunc(time / 60)).padStart(2, 0);
+    const sec = String(time % 60).padStart(2, 0);
+    // In each call print the remainning time to UI
+    labelTimer.textContent = `${min}:${sec}`;
+
+    // When 0 sec, stop timer and log out user
+    if (time === 0) {
+      clearInterval(timer);
+
+      labelWelcome.textContent = `Log in to get started`;
+      containerApp.style.opacity = 0;
+    }
+    // Decrease 1s
+    time--;
+  };
+
+  // Set time to 5 min
+  let time = 300;
+
+  // Call the timer every sec
+  timer = setInterval(tick, 1000);
+  return timer; // we need this timer to clear if we log in to another account
+};
+
 // Event handler - Login and display UI for current account
-let currentAccount;
-
-// Fake always Logged In///////////////////////////////////////
-currentAccount = account1;
-updateUi(currentAccount);
-containerApp.style.opacity = 100;
-
-//////////////////////////////////////////////////////////
+let currentAccount, timer;
 
 const handleLogin = function (e) {
   e.preventDefault();
@@ -279,14 +296,10 @@ const handleLogin = function (e) {
       currentAccount.locale,
       options
     ).format(now);
-    // const day = `${now.getDate()}`.padStart(2, 0);
-    // const month = `${now.getMonth() + 1}`.padStart(2, 0);
-    // const year = now.getFullYear();
-    // const hours = `${now.getHours()}`.padStart(2, 0);
-    // const minutes = `${now.getMinutes()}`.padStart(2, 0);
 
-    // labelDate.textContent = `${day}/${month}/${year}, ${hours}:${minutes}`;
-
+    // Timer
+    if (timer) clearInterval(timer);
+    timer = startLogOutTimer();
     // Update UI
     updateUi(currentAccount);
   } else {
@@ -329,6 +342,10 @@ const handleTranfer = function (e) {
     console.log('Invalid transfer!');
   }
 
+  // Reset the timer
+  clearInterval(timer);
+  timer = startLogOutTimer();
+
   // clear inputs
   inputTransferAmount.value = inputTransferTo.value = '';
   inputTransferAmount.blur();
@@ -357,6 +374,10 @@ const handleLoan = function (e) {
   } else {
     console.log('Request was canceled');
   }
+
+  // Reset the timer
+  clearInterval(timer);
+  timer = startLogOutTimer();
 
   //clear inputs
   inputLoanAmount.value = '';
