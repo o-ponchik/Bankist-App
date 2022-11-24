@@ -346,12 +346,14 @@ const handleLoan = function (e) {
     loanRequest > 0 &&
     deposits.some(deposit => deposit >= loanRequest * 0.1)
   ) {
-    // Add deposit
-    currentAccount.movements.push(loanRequest);
-    // add loan date
-    currentAccount.movementsDates.push(new Date().toISOString());
-    // update UI
-    updateUi(currentAccount);
+    setTimeout(function () {
+      // Add deposit
+      currentAccount.movements.push(loanRequest);
+      // add loan date
+      currentAccount.movementsDates.push(new Date().toISOString());
+      // update UI
+      updateUi(currentAccount);
+    }, 2000);
   } else {
     console.log('Request was canceled');
   }
