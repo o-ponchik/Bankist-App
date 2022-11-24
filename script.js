@@ -111,6 +111,14 @@ const inputClosePin = document.querySelector('.form__input--pin');
 
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
+/////////////////////////////////////////////////////////
+alert(`To test this application please use this data:
+Login: js, PIN: 1111
+Login: jd, PIN: 2222
+Login: stw, PIN: 3333
+Login: ss, PIN: 4444 🤗`);
+/////////////////////////////////////////////////////////
+
 // Date
 const formatMovementDate = function (date, locale) {
   const calcDaysPassed = (day1, day2) =>
